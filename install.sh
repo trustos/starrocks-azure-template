@@ -7,13 +7,13 @@ Java_version=java-1.8.0-openjdk-devel.x86_64
 StarRocks_url=https://releases.starrocks.io/starrocks/StarRocks-${StarRocks_version}.tar.gz
 
 # Install StarRocks.
-yum -y install wget
+sudo yum -y install wget
 mkdir -p $StarRocks_home -m 777
 wget -SO $StarRocks_home/StarRocks-${StarRocks_version}.tar.gz  $StarRocks_url
 cd $StarRocks_home && tar zxf StarRocks-${StarRocks_version}.tar.gz
 
 # Install Java JDK.
-yum -y install ${Java_version}
+sudo yum -y install ${Java_version}
 rpm -ql ${Java_version} | grep bin$
 
 
@@ -23,7 +23,7 @@ export JAVA_HOME=$JAVA_INSTALL_DIR
 
 # Add JAVA_HOME to env variables
 if ! [ $(cat ~/.bash_profile | grep $JAVA_HOME) ]; then
-	echo JAVA_HOME=$JAVA_HOME | tee --append /etc/environment
+	echo JAVA_HOME=$JAVA_HOME | tee --append ~/.bash_profile
 fi
 
 # Create directories for FE meta and BE storage in StarRocks.
@@ -31,7 +31,7 @@ mkdir -p $StarRocks_home/StarRocks-${StarRocks_version}/fe/meta
 mkdir -p $StarRocks_home/StarRocks-${StarRocks_version}/be/storage
 
 # Install relevant tools.
-yum -y install mysql net-tools telnet
+sudo yum -y install mysql net-tools telnet
 
 # Start FE.
 cd $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/
@@ -44,7 +44,7 @@ fi
 
 # Start BE.
 cd $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/
-./start_be.sh --daemon
+sudo ./start_be.sh --daemon
 
 # Add BE to start on boot
 if ! [ "$(crontab -l 2>/dev/null | grep "/be/bin/start_be.sh")" ]; then
