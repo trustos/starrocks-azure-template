@@ -22,7 +22,7 @@ echo $JAVA_INSTALL_DIR
 export JAVA_HOME=$JAVA_INSTALL_DIR
 
 # Add JAVA_HOME to env variables
-if ! [ $(cat ~/.bash_profile | grep $JAVA_HOME) ]; then
+if ! [ "$(cat ~/.bash_profile | grep $JAVA_HOME)" ]; then
 	echo JAVA_HOME=$JAVA_HOME | tee --append ~/.bash_profile
 fi
 
@@ -39,7 +39,7 @@ cd $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/
 
 # Add FE to start on boot
 if ! [ "$(crontab -l 2>/dev/null | grep "/fe/bin/start_fe.sh")" ]; then
-	echo @reboot $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/start_fe.sh --daemon | crontab -
+	(crontab -l; echo "@reboot $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/start_fe.sh --daemon") | sort -u | crontab -
 fi
 
 # Start BE.
@@ -48,7 +48,7 @@ sudo ./start_be.sh --daemon
 
 # Add BE to start on boot
 if ! [ "$(crontab -l 2>/dev/null | grep "/be/bin/start_be.sh")" ]; then
-	echo @reboot $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/start_be.sh --daemon | crontab -
+	(crontab -l; echo "@reboot $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/start_be.sh --daemon") | sort -u | crontab -
 fi
 
 # Sleep until the cluster starts.
