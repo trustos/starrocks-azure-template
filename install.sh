@@ -18,13 +18,7 @@ rpm -ql ${Java_version} | grep bin$
 
 
 JAVA_INSTALL_DIR=/usr/lib/jvm/$(rpm -aq | grep java-1.8.0-openjdk-1.8.0)
-echo $JAVA_INSTALL_DIR
 export JAVA_HOME=$JAVA_INSTALL_DIR
-
-# Add JAVA_HOME to env variables
-if ! [ "$(cat ~/.bash_profile | grep $JAVA_HOME)" ]; then
-	echo JAVA_HOME=$JAVA_HOME | tee --append ~/.bash_profile
-fi
 
 # Create directories for FE meta and BE storage in StarRocks.
 mkdir -p $StarRocks_home/StarRocks-${StarRocks_version}/fe/meta
@@ -37,19 +31,19 @@ sudo yum -y install mysql net-tools telnet
 cd $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/
 ./start_fe.sh --daemon
 
-# Add FE to start on boot
-if ! [ "$(crontab -l 2>/dev/null | grep "/fe/bin/start_fe.sh")" ]; then
-	(crontab -l; echo "@reboot $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/start_fe.sh --daemon") | sort -u | crontab -
-fi
-
 # Start BE.
 cd $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/
 sudo ./start_be.sh --daemon
 
-# Add BE to start on boot
-if ! [ "$(crontab -l 2>/dev/null | grep "/be/bin/start_be.sh")" ]; then
-	(crontab -l; echo "@reboot $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/start_be.sh --daemon") | sort -u | crontab -
-fi
+# Create and add scripts to startup a file
+# Write java variables to the file
+echo JAVA_HOME=$JAVA_HOME >> $StarRocks_home/startup.sh;
+echo export JAVA_HOME >> $StarRocks_home/startup.sh;
+# Write the db services locations
+echo sh $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/start_fe.sh --daemon >> $StarRocks_home/startup.sh;
+echo sh $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/start_be.sh --daemon >> $StarRocks_home/startup.sh;
+# Add the crontab job for the user to run the startup job on reboot
+(crontab -l; echo "@reboot $StarRocks_home/startup.sh") | sort -u | crontab -
 
 # Sleep until the cluster starts.
 sleep 30;
