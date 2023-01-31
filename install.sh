@@ -44,6 +44,8 @@ echo sh $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/start_fe.sh --daem
 echo sh $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/start_be.sh --daemon >> $StarRocks_home/startup.sh;
 # Add the crontab job for the user to run the startup job on reboot
 (crontab -l; echo "@reboot $StarRocks_home/startup.sh") | sort -u | crontab -
+echo "@reboot $StarRocks_home/startup.sh" >> /etc/crontab
+chmod +x $StarRocks_home/startup.sh
 
 # Sleep until the cluster starts.
 sleep 30;
