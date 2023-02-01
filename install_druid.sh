@@ -26,10 +26,10 @@ cd $ApacheDruid_home/$ApacheDruid_version
 
 # Create and add scripts to startup a file
 # Write java variables to the file
-echo JAVA_HOME=$JAVA_HOME >> $StarRocks_home/startup.sh;
-echo export JAVA_HOME >> $StarRocks_home/startup.sh;
+echo JAVA_HOME=$JAVA_HOME >> $ApacheDruid_home/startup.sh;
+echo export JAVA_HOME >> $ApacheDruid_home/startup.sh;
 # Write the db services locations
 echo sh $ApacheDruid_home/$ApacheDruid_version/bin/start-druid >> $ApacheDruid_home/startup.sh;
 # Add the crontab job for the user to run the startup job on reboot
-echo "@reboot $ApacheDruid_home/startup.sh" >> /etc/crontab
+(crontab -l; echo "@reboot $ApacheDruid_home/startup.sh") | sort -u | crontab -
 chmod +x $ApacheDruid_home/startup.sh
