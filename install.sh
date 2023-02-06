@@ -33,7 +33,7 @@ cd $StarRocks_home/StarRocks-${StarRocks_version}/fe/bin/
 
 # Start BE.
 cd $StarRocks_home/StarRocks-${StarRocks_version}/be/bin/
-sudo ./start_be.sh --daemon
+./start_be.sh --daemon
 
 # Create and add scripts to startup a file
 # Write java variables to the file
